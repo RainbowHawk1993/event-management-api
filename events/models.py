@@ -1,5 +1,6 @@
 import datetime
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.db import models
 
 class Event(models.Model):
@@ -7,7 +8,7 @@ class Event(models.Model):
     description = models.CharField(max_length=200)
     date = models.DateTimeField("date of event")
     location = models.CharField(max_length=200)
-    organizer = models.CharField(max_length=200)
+    organizer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="events")
     def __str__(self):
         return self.title
 

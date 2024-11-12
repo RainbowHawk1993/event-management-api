@@ -1,7 +1,7 @@
 <h1>{{ event.title }}</h1>
 <h2>{{ event.description }}</h2>
 <h2>{{ event.location }}</h2>
-<h2>{{ event.organizer }}</h2>
+<h2>{{ event.organizer.username }}</h2>
 <h2>{{ event.date }}</h2>
 
 {% if user.is_authenticated %}
@@ -13,8 +13,10 @@
             <button type="submit">Register for this Event</button>
         </form>
     {% endif %}
-    <a href="{% url 'events:update' event.pk %}">Edit</a>
-    <a href="{% url 'events:delete' event.pk %}">Delete</a>
+    {% if event.organizer == user %}
+        <a href="{% url 'events:update' event.pk %}">Edit</a>
+        <a href="{% url 'events:delete' event.pk %}">Delete</a>
+    {% endif %}
 {% else %}
     <p><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to register for this event.</p>
 {% endif %}

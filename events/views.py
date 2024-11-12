@@ -8,6 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 from .models import Event, EventRegistration
 from .forms import EventForm
+from .mixins import EventOwnerMixin
 
 
 class IndexView(generic.ListView):
@@ -21,8 +22,10 @@ class IndexView(generic.ListView):
 class DetailView(generic.DetailView):
     model = Event
     template_name = "events/detail.html"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['organizer'] = self.object.organizer.username
         if self.request.user.is_authenticated:
             context['is_registered'] = EventRegistration.objects.filter(
                 user=self.request.user, event=self.object
@@ -35,17 +38,22 @@ class CreateView(LoginRequiredMixin, generic.CreateView):
     model = Event
     form_class = EventForm
     template_name = "events/form.html"
+
+    def form_valid(self, form):
+        form.instance.organizer = self.request.user
+        return super().form_valid(form)
+
     def get_success_url(self):
         return reverse_lazy('events:detail', args=[self.object.pk])
 
-class UpdateView(LoginRequiredMixin, generic.UpdateView):
+class UpdateView(LoginRequiredMixin, EventOwnerMixin, generic.UpdateView):
     model = Event
     form_class = EventForm
     template_name = "events/form.html"
     def get_success_url(self):
         return reverse_lazy('events:detail', args=[self.object.pk])
 
-class DeleteView(LoginRequiredMixin, generic.DeleteView):
+class DeleteView(LoginRequiredMixin, EventOwnerMixin, generic.DeleteView):
     model = Event
     template_name = "events/confirm_delete.html"
     success_url = reverse_lazy('events:index')
