@@ -6,6 +6,8 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import generic
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import Event, EventRegistration
 from .forms import EventForm
 from .mixins import EventOwnerMixin
@@ -70,5 +72,14 @@ def register_for_event(request, event_id):
     else:
         EventRegistration.objects.create(user=request.user, event=event)
         messages.success(request, f"Successfully registered for {event.title}.")
+
+        send_mail(
+            subject=f"Registration Confirmation for {event.title}",
+            message=f"Hi {request.user.username},\n\nYou have successfully registered for {event.title} on {event.date} at {event.location}. We look forward to seeing you there!\n\nBest regards,\nEvent Team",
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[request.user.email],
+            fail_silently=True,
+        )
+
 
     return redirect("events:detail", pk=event.id)

@@ -75,6 +75,7 @@ LOGIN_REDIRECT_URL = 'events:index'
 LOGOUT_REDIRECT_URL = 'events:index'
 LOGIN_URL = 'accounts:login'
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

@@ -3,6 +3,9 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from .models import Event, EventRegistration
 from django.utils import timezone
+from django.core import mail
+
+User = get_user_model()
 
 class EventTests(TestCase):
 
@@ -99,3 +102,39 @@ class EventSearchTests(TestCase):
         response = self.client.get(reverse('events:index'), {'q': 'Nonexistent'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "No events found.")
+
+class EventEmailTests(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(username='user1', password='password', email='user1@example.com')
+        self.user2 = User.objects.create_user(username='user2', password='password', email='user2@example.com')
+
+        self.event = Event.objects.create(
+            title="Test Event",
+            description="A test event",
+            date="2024-12-31 12:00:00",
+            location="Test Location",
+            organizer=self.user1
+        )
+
+    def test_event_registration_sends_email(self):
+        self.client.login(username='user2', password='password')
+        mail.outbox = []
+        response = self.client.post(reverse('events:register_for_event', kwargs={'event_id': self.event.pk}))
+        self.assertRedirects(response, reverse('events:detail', kwargs={'pk': self.event.pk}))
+        self.assertEqual(len(mail.outbox), 1)
+
+        email = mail.outbox[0]
+        self.assertEqual(email.subject, f"Registration Confirmation for {self.event.title}")
+        self.assertIn("You have successfully registered for Test Event", email.body)
+        self.assertIn("Test Location", email.body)
+        self.assertIn("2024-12-31", email.body)
+        self.assertEqual(email.to, [self.user2.email])
+
+    def test_no_email_if_already_registered(self):
+        EventRegistration.objects.create(user=self.user2, event=self.event)
+        self.client.login(username='user2', password='password')
+
+        mail.outbox = []
+        response = self.client.post(reverse('events:register_for_event', kwargs={'event_id': self.event.pk}))
+        self.assertRedirects(response, reverse('events:detail', kwargs={'pk': self.event.pk}))
+        self.assertEqual(len(mail.outbox), 0)
