@@ -28,10 +28,19 @@ The Events API allows users to view, create, update, delete, and register for ev
 - HTTP Method: GET
 - Authentication: Not required
 - Template: events/index.html
+- Query Parameters:
+`q` (optional): A search term to filter events by title (case-insensitive).
 - Context Data:
 `events_list`: List of events ordered by date.
-- Example Response:
-Displays a list of all events in events/index.html.
+- Example Requests:
+
+```
+GET /events/
+```
+
+```
+GET /events/?q=Music
+```
 
 2. DetailView
 - Description: Retrieves details for a specific event, including whether the current user is registered.

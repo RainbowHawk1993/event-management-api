@@ -81,3 +81,21 @@ class EventTests(TestCase):
         self.client.login(username='user2', password='password')
         response = self.client.get(reverse('events:delete', kwargs={'pk': self.event.pk}))
         self.assertEqual(response.status_code, 403)
+
+class EventSearchTests(TestCase):
+
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(username="testuser", password="password")
+        Event.objects.create(title="Music Festival", description="An awesome music event", date=timezone.now(), organizer=self.user)
+        Event.objects.create(title="Art Expo", description="Art and culture event", date=timezone.now(), organizer=self.user)
+
+    def test_search_events(self):
+        response = self.client.get(reverse('events:index'), {'q': 'Music'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Music Festival")
+        self.assertNotContains(response, "Art Expo")
+
+    def test_search_no_results(self):
+        response = self.client.get(reverse('events:index'), {'q': 'Nonexistent'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No events found.")

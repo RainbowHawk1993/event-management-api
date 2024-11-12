@@ -1,4 +1,4 @@
-from django.db.models import F
+from django.db.models import F, Q
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -16,8 +16,11 @@ class IndexView(generic.ListView):
     context_object_name = "events_list"
 
     def get_queryset(self):
-        return Event.objects.order_by("-date")
-
+        query = self.request.GET.get('q')
+        if query:
+            return Event.objects.filter(title__icontains=query).order_by("-date")
+        else:
+            return Event.objects.order_by("-date")
 
 class DetailView(generic.DetailView):
     model = Event
