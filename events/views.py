@@ -1,5 +1,6 @@
 from django.db.models import F
 from django.http import HttpResponseRedirect
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views import generic
@@ -19,21 +20,21 @@ class DetailView(generic.DetailView):
     model = Event
     template_name = "events/detail.html"
 
-class CreateView(generic.CreateView):
+class CreateView(LoginRequiredMixin, generic.CreateView):
     model = Event
     form_class = EventForm
     template_name = "events/form.html"
     def get_success_url(self):
         return reverse_lazy('events:detail', args=[self.object.pk])
 
-class UpdateView(generic.UpdateView):
+class UpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Event
     form_class = EventForm
     template_name = "events/form.html"
     def get_success_url(self):
         return reverse_lazy('events:detail', args=[self.object.pk])
 
-class DeleteView(generic.DeleteView):
+class DeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Event
     template_name = "events/confirm_delete.html"
     success_url = reverse_lazy('events:index')

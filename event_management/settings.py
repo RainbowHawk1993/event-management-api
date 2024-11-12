@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'events.apps.EventsConfig',
+    'accounts.apps.AccountsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -69,6 +70,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'event_management.wsgi.application'
+
+LOGIN_REDIRECT_URL = 'events:index'
+LOGOUT_REDIRECT_URL = 'events:index'
+LOGIN_URL = 'accounts:login'
 
 
 # Database

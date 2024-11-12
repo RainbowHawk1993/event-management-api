@@ -11,3 +11,9 @@
 {% else %}
     <p>No events are available.</p>
 {% endif %}
+
+{% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }} | <a href="{% url 'accounts:logout' %}">Logout</a></p>
+{% else %}
+    <p><a href="{% url 'accounts:login' %}">Login</a> | <a href="{% url 'accounts:register' %}">Register</a></p>
+{% endif %}
