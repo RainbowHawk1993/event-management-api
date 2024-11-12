@@ -1,6 +1,7 @@
 Just a small Django REST-Api for Event Management
 
 **Run locally**
+
 To run the app, execute the following commands:
 
 ```
@@ -10,9 +11,10 @@ docker-compose up
 In your browser go to http://localhost:8000/events/
 
 
-API Documentation:
+<h1>API Documentation:</h1>
 
 **Overview**
+
 The Events API allows users to view, create, update, delete, and register for events. It includes the following views:
 
 - IndexView - List all events.
