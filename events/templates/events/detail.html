@@ -3,3 +3,7 @@
 <h2>{{ event.location }}</h2>
 <h2>{{ event.organizer }}</h2>
 <h2>{{ event.date }}</h2>
+
+<a href="{% url 'events:update' event.pk %}">Edit</a>
+<a href="{% url 'events:delete' event.pk %}">Delete</a>
+<a href="{% url 'events:index' %}">Back to events List</a>

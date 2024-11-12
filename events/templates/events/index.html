@@ -1,3 +1,7 @@
+<h1>Events</h1>
+<a href="{% url 'events:create' %}">Create New Event</a>
+<ul>
+
 {% if events_list %}
     <ul>
     {% for event in events_list %}

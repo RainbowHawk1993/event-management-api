@@ -1,10 +1,10 @@
 from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
-
 from .models import Event
+from .forms import EventForm
 
 
 class IndexView(generic.ListView):
@@ -12,7 +12,6 @@ class IndexView(generic.ListView):
     context_object_name = "events_list"
 
     def get_queryset(self):
-        """Return the last five published questions."""
         return Event.objects.order_by("-date")
 
 
@@ -20,6 +19,21 @@ class DetailView(generic.DetailView):
     model = Event
     template_name = "events/detail.html"
 
-#def detail(request, event_id):
-#    event = get_object_or_404(Event, pk=event_id)
-#    return render(request, "events/detail.html", {"event": event})
+class CreateView(generic.CreateView):
+    model = Event
+    form_class = EventForm
+    template_name = "events/form.html"
+    def get_success_url(self):
+        return reverse_lazy('events:detail', args=[self.object.pk])
+
+class UpdateView(generic.UpdateView):
+    model = Event
+    form_class = EventForm
+    template_name = "events/form.html"
+    def get_success_url(self):
+        return reverse_lazy('events:detail', args=[self.object.pk])
+
+class DeleteView(generic.DeleteView):
+    model = Event
+    template_name = "events/confirm_delete.html"
+    success_url = reverse_lazy('events:index')
