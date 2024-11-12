@@ -4,6 +4,27 @@
 <h2>{{ event.organizer }}</h2>
 <h2>{{ event.date }}</h2>
 
-<a href="{% url 'events:update' event.pk %}">Edit</a>
-<a href="{% url 'events:delete' event.pk %}">Delete</a>
-<a href="{% url 'events:index' %}">Back to events List</a>
+{% if user.is_authenticated %}
+    {% if is_registered %}
+        <p>You are registered for this event.</p>
+    {% else %}
+        <form action="{% url 'events:register_for_event' event.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Register for this Event</button>
+        </form>
+    {% endif %}
+    <a href="{% url 'events:update' event.pk %}">Edit</a>
+    <a href="{% url 'events:delete' event.pk %}">Delete</a>
+{% else %}
+    <p><a href="{% url 'accounts:login' %}?next={{ request.path }}">Log in</a> to register for this event.</p>
+{% endif %}
+<a href="{% url 'events:index' %}">Back to Events List</a>
+
+<h3>Registered Users:</h3>
+<ul>
+    {% for registration in event.eventregistration_set.all %}
+        <li>{{ registration.user.username }}</li>
+    {% empty %}
+        <p>No users have registered for this event yet.</p>
+    {% endfor %}
+</ul>
