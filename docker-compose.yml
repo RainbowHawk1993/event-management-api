@@ -8,3 +8,11 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+    environment:
+      DJANGO_SETTINGS_MODULE: "event_management.settings"
+
+  test:
+    build: .
+    command: sh -c "python manage.py test"
+    volumes:
+      - .:/app
