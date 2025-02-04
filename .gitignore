@@ -4,3 +4,10 @@ lib/
 bin/
 pyvenv.cfg
 event_management/lib64
+.env
+**/.terraform/*
+.terraform.tfstate.lock.info
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
