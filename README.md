@@ -5,8 +5,8 @@ Just a small Django REST-Api for Event Management
 To run the app, execute the following commands:
 
 ```
-docker-compose build
-docker-compose up
+docker compose build
+docker compose up
 ```
 In your browser go to http://localhost:8000/events/
 
